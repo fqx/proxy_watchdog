@@ -26,9 +26,10 @@ PROXY = {
 }
 SERVICE = 'v2ray'
 SLEEP_TIMER = 300
+MAX_RETRY = 3
 
 # Opening log
-logging.basicConfig(level=logging.WARNING,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(message)s',
                     filename=LOG_FILE)
 
@@ -44,6 +45,7 @@ def main():
     """Main"""
     time.sleep(SLEEP_TIMER)
     logging.info('Start watchdog.')
+    retry = 0
     while True:
         try:
             req = requests.get(URL, timeout=5, proxies=PROXY)
@@ -52,19 +54,21 @@ def main():
             break
         except ProxyError:
             restart('Proxy is down.')
+            continue
         except Timeout:
             logging.info('Timeout.')
+            retry += 1
+            if retry > MAX_RETRY:
+                retry = 0
+                restart('Timeout.')
             time.sleep(60)
-            try:
-                req = requests.get(URL, timeout=5)
-            except Timeout:
-                restart('Timeout')
             continue
         if req.status_code != 204:
-            restart('Wrong return')
+            restart('Wrong return.')
             continue
         else:
             logging.info('Proxy is working fine. Sleep 300 seconds.')
+            retry = 0
             time.sleep(SLEEP_TIMER)
 
 
