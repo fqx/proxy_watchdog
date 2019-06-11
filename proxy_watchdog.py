@@ -15,6 +15,7 @@ import requests
 import subprocess
 import time
 import logging
+from logging.handlers import WatchedFileHandler
 from requests.exceptions import Timeout, ProxyError
 
 # Constants
@@ -28,10 +29,15 @@ SERVICE = 'v2ray'
 SLEEP_TIMER = 300
 MAX_RETRY = 3
 
-# Opening log
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s %(levelname)s %(message)s',
-                    filename=LOG_FILE)
+
+# log setup
+def log_setup():
+    log_handler = WatchedFileHandler(LOG_FILE)
+    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    log_handler.setFormatter(formatter)
+    logger = logging.getLogger()
+    logger.addHandler(log_handler)
+    logger.setLevel(logging.INFO)
 
 
 def restart(message):
@@ -43,6 +49,8 @@ def restart(message):
 
 def main():
     """Main"""
+    log_setup()
+    logging.info('Wait {} seconds for proxy to boot up.'.format(SLEEP_TIMER))
     time.sleep(SLEEP_TIMER)
     logging.info('Start watchdog.')
     retry = 0
