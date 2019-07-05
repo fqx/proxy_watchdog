@@ -20,7 +20,7 @@ from requests.exceptions import Timeout, ProxyError
 
 # Constants
 LOG_FILE = '/var/log/proxy_watchdog.log'
-URL = 'http://www.gstatic.com/generate_204'
+URL = 'http://connectivitycheck.gstatic.com/generate_204'
 PROXY = {
   "http": "http://127.0.0.1:8118",
   "https": "http://127.0.0.1:8118",
@@ -75,7 +75,7 @@ def main():
             restart('Wrong return.')
             continue
         else:
-            logging.info('Proxy is working fine. Sleep 300 seconds.')
+            logging.info('Proxy is working fine. Sleep {} seconds.'.format(SLEEP_TIMER))
             retry = 0
             time.sleep(SLEEP_TIMER)
 
