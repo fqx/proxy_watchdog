@@ -75,7 +75,7 @@ def main():
             restart('Wrong return.')
             continue
         else:
-            logging.info('Proxy is working fine. Sleep {} seconds.'.format(SLEEP_TIMER))
+            logging.info('Proxy is working fine. Latency is {}ms.'.format(round(req.elapsed.microseconds/1000)))
             retry = 0
             time.sleep(SLEEP_TIMER)
 
